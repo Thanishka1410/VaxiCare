@@ -79,8 +79,6 @@ class FamilyScreen extends StatelessWidget {
                 else
                   ...profiles.map((child) {
                     final isCurrentActive = child.id == selectedId;
-                    final childDoses = provider.childVaccines;
-                    // Get dose statistics for this specific child
                     return Card(
                       margin: const EdgeInsets.only(bottom: 16),
                       elevation: 0,
