@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <base href="$FLUTTER_BASE_HREF">
+
+  <meta charset="UTF-8">
+  <meta content="IE=Edge" http-equiv="X-UA-Compatible">
+  <meta name="description" content="VaxiCare — Smart Vaccination Reminder and Tracking Application Using Flutter. Never Miss a Dose. Protect Every Tomorrow.">
+
+  <!-- iOS meta tags & icons -->
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="apple-mobile-web-app-title" content="VaxiCare">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+  <title>VaxiCare — Smart Vaccination Reminder</title>
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+
+  <style>
+    body {
+      inset: 0;
+      overflow: hidden;
+      margin: 0;
+      padding: 0;
+      position: fixed;
+      background-color: #F8FAFC;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    }
+    #loading-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      width: 100vw;
+      color: #0F172A;
+    }
+    .spinner {
+      width: 48px;
+      height: 48px;
+      border: 4px solid #E2E8F0;
+      border-top: 4px solid #2563EB;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin-bottom: 20px;
+    }
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    .brand-title {
+      font-size: 24px;
+      font-weight: 700;
+      color: #2563EB;
+      letter-spacing: -0.5px;
+    }
+    .brand-tagline {
+      font-size: 14px;
+      color: #64748B;
+      margin-top: 6px;
+    }
+  </style>
+</head>
+<body>
+  <div id="loading-container">
+    <div class="spinner"></div>
+    <div class="brand-title">VaxiCare</div>
+    <div class="brand-tagline">Never Miss a Dose. Protect Every Tomorrow.</div>
+  </div>
+
+  <script src="flutter_bootstrap.js" async></script>
+</body>
+</html>
