@@ -1,6 +1,6 @@
 # VaxiCare — Smart Vaccination Reminder & Tracking Application
 
-[![Deploy VaxiCare to GitHub Pages](https://github.com/YOUR_USERNAME/VaxiCare/actions/workflows/deploy.yml/badge.svg)](https://github.com/YOUR_USERNAME/VaxiCare/actions/workflows/deploy.yml)
+[![Deploy VaxiCare to GitHub Pages](https://github.com/Thanishka1410/VaxiCare/actions/workflows/deploy.yml/badge.svg)](https://github.com/Thanishka1410/VaxiCare/actions/workflows/deploy.yml)
 
 > **Tagline:** Never Miss a Dose. Protect Every Tomorrow.  
 > **Project Title:** VaxiCare: A Smart Vaccination Reminder and Tracking Application Using Flutter  
@@ -21,7 +21,7 @@ VaxiCare provides a clean, responsive, and reassuring digital companion built us
 Once pushed to GitHub, the application is automatically built and hosted via **GitHub Actions** and **GitHub Pages**:
 
 🔗 **Live Website URL:**  
-`https://YOUR_USERNAME.github.io/VaxiCare/`  
+`https://Thanishka1410.github.io/VaxiCare/`  
 *(Replace `YOUR_USERNAME` with your actual GitHub username)*
 
 ---
