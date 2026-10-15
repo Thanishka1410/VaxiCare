@@ -2,11 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import '../core/constants/app_colors.dart';
+import '../core/theme/app_animations.dart';
 import '../models/vaccine_record.dart';
 import '../providers/vaccine_provider.dart';
 import '../widgets/empty_state_widget.dart';
 import '../widgets/responsive_layout.dart';
 import '../widgets/vaccine_detail_dialog.dart';
+import '../widgets/hover_scale_card.dart';
 
 class RecordsScreen extends StatelessWidget {
   const RecordsScreen({super.key});
@@ -32,98 +34,88 @@ class RecordsScreen extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Top digital card summary
-                Container(
-                  padding: const EdgeInsets.all(24),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(20),
-                    border: Border.all(color: AppColors.border),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.03),
-                        blurRadius: 10,
-                        offset: const Offset(0, 4),
-                      ),
-                    ],
-                  ),
-                  child: Column(
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Row(
-                            children: [
-                              Container(
-                                width: 56,
-                                height: 56,
-                                decoration: BoxDecoration(
-                                  color: AppColors.primaryLight,
-                                  shape: BoxShape.circle,
-                                ),
-                                alignment: Alignment.center,
-                                child: Text(activeChild.avatarEmoji, style: const TextStyle(fontSize: 28)),
-                              ),
-                              const SizedBox(width: 16),
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    activeChild.name,
-                                    style: const TextStyle(
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.w700,
-                                      color: AppColors.primaryText,
-                                    ),
+                // Top digital card summary with hover effect
+                HoverScaleCard(
+                  child: Padding(
+                    padding: const EdgeInsets.all(24),
+                    child: Column(
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Row(
+                              children: [
+                                Container(
+                                  width: 56,
+                                  height: 56,
+                                  decoration: const BoxDecoration(
+                                    color: AppColors.primaryLight,
+                                    shape: BoxShape.circle,
                                   ),
-                                  const SizedBox(height: 2),
+                                  alignment: Alignment.center,
+                                  child: Text(activeChild.avatarEmoji, style: const TextStyle(fontSize: 28)),
+                                ),
+                                const SizedBox(width: 16),
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      activeChild.name,
+                                      style: const TextStyle(
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.w700,
+                                        color: AppColors.primaryText,
+                                      ),
+                                    ),
+                                    const SizedBox(height: 2),
+                                    Text(
+                                      'DOB: ${dateFormat.format(activeChild.dateOfBirth)} • ${activeChild.bloodGroup} • ${activeChild.gender}',
+                                      style: const TextStyle(
+                                        fontSize: 12,
+                                        color: AppColors.secondaryText,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                            Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                              decoration: BoxDecoration(
+                                color: AppColors.successLight,
+                                borderRadius: BorderRadius.circular(20),
+                                border: Border.all(color: AppColors.successGreen.withValues(alpha: 0.3)),
+                              ),
+                              child: const Row(
+                                children: [
+                                  Icon(Icons.verified, size: 14, color: AppColors.successGreen),
+                                  SizedBox(width: 6),
                                   Text(
-                                    'DOB: ${dateFormat.format(activeChild.dateOfBirth)} • ${activeChild.bloodGroup} • ${activeChild.gender}',
-                                    style: const TextStyle(
-                                      fontSize: 12,
-                                      color: AppColors.secondaryText,
+                                    'Digital Pass',
+                                    style: TextStyle(
+                                      fontSize: 11,
+                                      fontWeight: FontWeight.w700,
+                                      color: AppColors.successGreen,
                                     ),
                                   ),
                                 ],
                               ),
-                            ],
-                          ),
-                          Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                            decoration: BoxDecoration(
-                              color: AppColors.successLight,
-                              borderRadius: BorderRadius.circular(20),
-                              border: Border.all(color: AppColors.successGreen.withOpacity(0.3)),
                             ),
-                            child: const Row(
-                              children: [
-                                Icon(Icons.verified, size: 14, color: AppColors.successGreen),
-                                SizedBox(width: 6),
-                                Text(
-                                  'Digital Pass',
-                                  style: TextStyle(
-                                    fontSize: 11,
-                                    fontWeight: FontWeight.w700,
-                                    color: AppColors.successGreen,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 20),
-                      const Divider(height: 1),
-                      const SizedBox(height: 16),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceAround,
-                        children: [
-                          _buildMiniStat('Completed Doses', '${completedDoses.length}', AppColors.successGreen),
-                          _buildMiniStat('Pending Doses', '${provider.upcomingCount + provider.overdueCount}', AppColors.warningAmber),
-                          _buildMiniStat('Overall Protection', '${(provider.completionProgress * 100).round()}%', AppColors.primaryBlue),
-                        ],
-                      ),
-                    ],
+                          ],
+                        ),
+                        const SizedBox(height: 20),
+                        const Divider(height: 1),
+                        const SizedBox(height: 16),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          children: [
+                            _buildMiniStat('Completed Doses', '${completedDoses.length}', AppColors.successGreen),
+                            _buildMiniStat('Pending Doses', '${provider.upcomingCount + provider.overdueCount}', AppColors.warningAmber),
+                            _buildMiniStat('Overall Protection', '${(provider.completionProgress * 100).round()}%', AppColors.primaryBlue),
+                          ],
+                        ),
+                      ],
+                    ),
                   ),
                 ),
                 const SizedBox(height: 28),
@@ -157,7 +149,7 @@ class RecordsScreen extends StatelessWidget {
                 const SizedBox(height: 12),
 
                 if (completedDoses.isEmpty)
-                  EmptyStateWidget(
+                  const EmptyStateWidget(
                     icon: Icons.assignment_outlined,
                     title: 'No Completed Records Yet',
                     description: 'Mark doses as completed from the Dashboard or Schedule tab to populate this passbook.',
@@ -199,9 +191,21 @@ class RecordsScreen extends StatelessWidget {
                           isThreeLine: true,
                           trailing: const Icon(Icons.chevron_right, color: AppColors.secondaryText, size: 20),
                           onTap: () {
-                            showDialog(
+                            showGeneralDialog(
                               context: context,
-                              builder: (ctx) => VaccineDetailDialog(
+                              barrierDismissible: true,
+                              barrierLabel: 'Record Detail',
+                              transitionDuration: AppAnimations.normal,
+                              transitionBuilder: (context, anim, _, child) {
+                                return Transform.scale(
+                                  scale: 0.95 + (0.05 * anim.value),
+                                  child: Opacity(
+                                    opacity: anim.value,
+                                    child: child,
+                                  ),
+                                );
+                              },
+                              pageBuilder: (ctx, _, __) => VaccineDetailDialog(
                                 vaccine: record,
                                 onMarkAdministered: (adminDate, location, batch, notes) {
                                   provider.markVaccineAdministered(

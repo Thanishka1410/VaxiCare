@@ -3,6 +3,7 @@ import 'package:intl/intl.dart';
 import '../core/constants/app_colors.dart';
 import '../models/vaccine_record.dart';
 import 'status_badge.dart';
+import 'hover_scale_card.dart';
 
 class VaccineCard extends StatelessWidget {
   final VaccineRecord vaccine;
@@ -20,11 +21,28 @@ class VaccineCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final dateFormat = DateFormat('dd MMM yyyy');
 
-    return Card(
-      margin: const EdgeInsets.symmetric(vertical: 6),
-      child: InkWell(
+    Color iconBgColor;
+    Color iconColor;
+    IconData cardIcon;
+
+    if (vaccine.isCompleted) {
+      iconBgColor = AppColors.successLight;
+      iconColor = AppColors.successGreen;
+      cardIcon = Icons.verified_user_rounded;
+    } else if (vaccine.isOverdue) {
+      iconBgColor = AppColors.errorLight;
+      iconColor = AppColors.errorRed;
+      cardIcon = Icons.warning_amber_rounded;
+    } else {
+      iconBgColor = AppColors.primaryLight;
+      iconColor = AppColors.primaryBlue;
+      cardIcon = Icons.medical_services_outlined;
+    }
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 5),
+      child: HoverScaleCard(
         onTap: onTap,
-        borderRadius: BorderRadius.circular(16),
         child: Padding(
           padding: const EdgeInsets.all(16),
           child: Column(
@@ -33,24 +51,18 @@ class VaccineCard extends StatelessWidget {
               Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Container(
+                  AnimatedContainer(
+                    duration: const Duration(milliseconds: 250),
+                    curve: Curves.easeOutCubic,
                     width: 44,
                     height: 44,
                     decoration: BoxDecoration(
-                      color: vaccine.isCompleted
-                          ? AppColors.successLight
-                          : (vaccine.isOverdue ? AppColors.errorLight : AppColors.primaryLight),
+                      color: iconBgColor,
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: Icon(
-                      vaccine.isCompleted
-                          ? Icons.verified_user_rounded
-                          : (vaccine.isOverdue
-                              ? Icons.warning_amber_rounded
-                              : Icons.medical_services_outlined),
-                      color: vaccine.isCompleted
-                          ? AppColors.successGreen
-                          : (vaccine.isOverdue ? AppColors.errorRed : AppColors.primaryBlue),
+                      cardIcon,
+                      color: iconColor,
                       size: 22,
                     ),
                   ),
@@ -139,7 +151,7 @@ class VaccineCard extends StatelessWidget {
                       ),
                       onPressed: onMarkDone,
                       icon: const Icon(Icons.check, size: 16),
-                      label: const Text('Mark Given', style: TextStyle(fontSize: 12)),
+                      label: const Text('Mark Given', style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600)),
                     )
                   else
                     const Icon(

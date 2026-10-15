@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../core/constants/app_colors.dart';
+import '../core/theme/app_animations.dart';
 import '../providers/auth_provider.dart';
 import '../providers/vaccine_provider.dart';
 import '../widgets/responsive_layout.dart';
@@ -10,6 +11,8 @@ import 'records_screen.dart';
 import 'family_screen.dart';
 import 'settings_screen.dart';
 import 'auth_screen.dart';
+import 'splash_screen.dart';
+import 'onboarding_screen.dart';
 
 class MainNavigationShell extends StatefulWidget {
   const MainNavigationShell({super.key});
@@ -20,12 +23,36 @@ class MainNavigationShell extends StatefulWidget {
 
 class _MainNavigationShellState extends State<MainNavigationShell> {
   int _currentIndex = 0;
+  bool _showSplash = true;
+  bool _showOnboarding = false;
 
   @override
   Widget build(BuildContext context) {
-    final auth = Provider.of<AuthProvider>(context);
+    // 1. Splash Screen
+    if (_showSplash) {
+      return SplashScreen(
+        onFinish: () {
+          setState(() {
+            _showSplash = false;
+            _showOnboarding = true;
+          });
+        },
+      );
+    }
 
-    // If not authenticated, render the simulated AuthScreen
+    // 2. Onboarding Screen
+    if (_showOnboarding) {
+      return OnboardingScreen(
+        onFinish: () {
+          setState(() {
+            _showOnboarding = false;
+          });
+        },
+      );
+    }
+
+    // 3. Auth Check
+    final auth = Provider.of<AuthProvider>(context);
     if (!auth.isAuthenticated) {
       return AuthScreen(
         onLoginSuccess: () {
@@ -155,7 +182,6 @@ class _MainNavigationShellState extends State<MainNavigationShell> {
       ),
       body: Row(
         children: [
-          // If on Desktop/Wide browser view, show Navigation Rail for superior UX
           if (isDesktop)
             NavigationRail(
               selectedIndex: _currentIndex,
@@ -203,16 +229,19 @@ class _MainNavigationShellState extends State<MainNavigationShell> {
               ],
             ),
           if (isDesktop) const VerticalDivider(thickness: 1, width: 1, color: AppColors.border),
-          // Screen View
+          // Screen with subtle fade switch transition
           Expanded(
-            child: IndexedStack(
-              index: _currentIndex,
-              children: screens,
+            child: AnimatedSwitcher(
+              duration: AppAnimations.normal,
+              curve: AppAnimations.smoothInOut,
+              child: KeyedSubtree(
+                key: ValueKey<int>(_currentIndex),
+                child: screens[_currentIndex],
+              ),
             ),
           ),
         ],
       ),
-      // Mobile / Tablet Bottom Navigation Bar
       bottomNavigationBar: isDesktop
           ? null
           : Container(
@@ -224,6 +253,7 @@ class _MainNavigationShellState extends State<MainNavigationShell> {
                 onDestinationSelected: (idx) => setState(() => _currentIndex = idx),
                 backgroundColor: Colors.white,
                 indicatorColor: AppColors.primaryLight,
+                animationDuration: AppAnimations.normal,
                 destinations: destinations,
               ),
             ),

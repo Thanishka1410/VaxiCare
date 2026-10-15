@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../core/constants/app_colors.dart';
+import '../core/theme/app_animations.dart';
 
 class ProgressSummaryCard extends StatelessWidget {
   final int completed;
@@ -17,112 +18,130 @@ class ProgressSummaryCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final int percentage = (progress * 100).round();
+    return TweenAnimationBuilder<double>(
+      tween: Tween<double>(begin: 0.0, end: progress.clamp(0.0, 1.0)),
+      duration: AppAnimations.extended,
+      curve: AppAnimations.defaultCurve,
+      builder: (context, animatedProgress, child) {
+        final int percentage = (animatedProgress * 100).round();
 
-    return Container(
-      decoration: BoxDecoration(
-        gradient: const LinearGradient(
-          colors: [Color(0xFF1E3A8A), AppColors.primaryBlue],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
-        borderRadius: BorderRadius.circular(20),
-        boxShadow: [
-          BoxShadow(
-            color: AppColors.primaryBlue.withOpacity(0.25),
-            blurRadius: 16,
-            offset: const Offset(0, 8),
+        return Container(
+          decoration: BoxDecoration(
+            gradient: const LinearGradient(
+              colors: [Color(0xFF1E3A8A), AppColors.primaryBlue],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+            borderRadius: BorderRadius.circular(20),
+            boxShadow: [
+              BoxShadow(
+                color: AppColors.primaryBlue.withValues(alpha: 0.25),
+                blurRadius: 16,
+                offset: const Offset(0, 8),
+              ),
+            ],
           ),
-        ],
-      ),
-      padding: const EdgeInsets.all(20),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          padding: const EdgeInsets.all(20),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  const Text(
-                    'Immunization Progress',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 16,
-                      fontWeight: FontWeight.w700,
-                    ),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text(
+                        'Immunization Progress',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 16,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        '$percentage% doses administered',
+                        style: TextStyle(
+                          color: Colors.white.withValues(alpha: 0.85),
+                          fontSize: 13,
+                        ),
+                      ),
+                    ],
                   ),
-                  const SizedBox(height: 4),
-                  Text(
-                    '$percentage% doses administered',
-                    style: TextStyle(
-                      color: Colors.white.withOpacity(0.85),
-                      fontSize: 13,
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                    decoration: BoxDecoration(
+                      color: Colors.white.withValues(alpha: 0.2),
+                      borderRadius: BorderRadius.circular(30),
+                    ),
+                    child: Row(
+                      children: [
+                        const Icon(Icons.shield_outlined, color: Colors.white, size: 16),
+                        const SizedBox(width: 6),
+                        _buildAnimatedCounter(completed, 'Completed'),
+                      ],
                     ),
                   ),
                 ],
               ),
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.2),
-                  borderRadius: BorderRadius.circular(30),
+              const SizedBox(height: 16),
+              ClipRRect(
+                borderRadius: BorderRadius.circular(8),
+                child: LinearProgressIndicator(
+                  value: animatedProgress,
+                  minHeight: 10,
+                  backgroundColor: Colors.white.withValues(alpha: 0.2),
+                  valueColor: const AlwaysStoppedAnimation<Color>(AppColors.secondaryMint),
                 ),
-                child: Row(
-                  children: [
-                    const Icon(Icons.shield_outlined, color: Colors.white, size: 16),
-                    const SizedBox(width: 6),
-                    Text(
-                      '$completed Completed',
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.w600,
-                        fontSize: 12,
-                      ),
-                    ),
-                  ],
-                ),
+              ),
+              const SizedBox(height: 18),
+              Row(
+                children: [
+                  _buildStatChip(
+                    label: 'Completed',
+                    count: completed,
+                    color: AppColors.secondaryMint,
+                    icon: Icons.check_circle_outline,
+                  ),
+                  const SizedBox(width: 12),
+                  _buildStatChip(
+                    label: 'Upcoming',
+                    count: upcoming,
+                    color: const Color(0xFF93C5FD),
+                    icon: Icons.schedule,
+                  ),
+                  const SizedBox(width: 12),
+                  _buildStatChip(
+                    label: 'Overdue',
+                    count: overdue,
+                    color: const Color(0xFFFCA5A5),
+                    icon: Icons.error_outline,
+                  ),
+                ],
               ),
             ],
           ),
-          const SizedBox(height: 16),
-          ClipRRect(
-            borderRadius: BorderRadius.circular(8),
-            child: LinearProgressIndicator(
-              value: progress.clamp(0.0, 1.0),
-              minHeight: 10,
-              backgroundColor: Colors.white.withOpacity(0.2),
-              valueColor: const AlwaysStoppedAnimation<Color>(AppColors.secondaryMint),
-            ),
+        );
+      },
+    );
+  }
+
+  Widget _buildAnimatedCounter(int value, String suffix) {
+    return TweenAnimationBuilder<int>(
+      tween: IntTween(begin: 0, end: value),
+      duration: AppAnimations.medium,
+      curve: AppAnimations.defaultCurve,
+      builder: (context, animatedVal, _) {
+        return Text(
+          '$animatedVal $suffix',
+          style: const TextStyle(
+            color: Colors.white,
+            fontWeight: FontWeight.w600,
+            fontSize: 12,
           ),
-          const SizedBox(height: 18),
-          Row(
-            children: [
-              _buildStatChip(
-                label: 'Completed',
-                count: completed,
-                color: AppColors.secondaryMint,
-                icon: Icons.check_circle_outline,
-              ),
-              const SizedBox(width: 12),
-              _buildStatChip(
-                label: 'Upcoming',
-                count: upcoming,
-                color: const Color(0xFF93C5FD),
-                icon: Icons.schedule,
-              ),
-              const SizedBox(width: 12),
-              _buildStatChip(
-                label: 'Overdue',
-                count: overdue,
-                color: const Color(0xFFFCA5A5),
-                icon: Icons.error_outline,
-              ),
-            ],
-          ),
-        ],
-      ),
+        );
+      },
     );
   }
 
@@ -136,7 +155,7 @@ class ProgressSummaryCard extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 8),
         decoration: BoxDecoration(
-          color: Colors.white.withOpacity(0.12),
+          color: Colors.white.withValues(alpha: 0.12),
           borderRadius: BorderRadius.circular(12),
         ),
         child: Column(
@@ -146,13 +165,20 @@ class ProgressSummaryCard extends StatelessWidget {
               children: [
                 Icon(icon, color: color, size: 14),
                 const SizedBox(width: 4),
-                Text(
-                  '$count',
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.w700,
-                    fontSize: 15,
-                  ),
+                TweenAnimationBuilder<int>(
+                  tween: IntTween(begin: 0, end: count),
+                  duration: AppAnimations.medium,
+                  curve: AppAnimations.defaultCurve,
+                  builder: (context, animatedCount, _) {
+                    return Text(
+                      '$animatedCount',
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.w700,
+                        fontSize: 15,
+                      ),
+                    );
+                  },
                 ),
               ],
             ),
@@ -160,7 +186,7 @@ class ProgressSummaryCard extends StatelessWidget {
             Text(
               label,
               style: TextStyle(
-                color: Colors.white.withOpacity(0.85),
+                color: Colors.white.withValues(alpha: 0.85),
                 fontSize: 11,
                 fontWeight: FontWeight.w500,
               ),
