@@ -204,7 +204,6 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
   }
 
   Widget _buildCalendarView(VaccineProvider provider) {
-    final now = DateTime.now();
     final childVaccines = provider.childVaccines;
 
     // Filter doses matching selected calendar date month

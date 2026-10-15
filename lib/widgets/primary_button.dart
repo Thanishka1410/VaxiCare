@@ -55,7 +55,7 @@ class _PrimaryButtonState extends State<PrimaryButton> {
         onTapUp: (_) {
           if (isEnabled) setState(() => _isPressed = false);
         },
-        onTapCancel: (_) {
+        onTapCancel: () {
           if (isEnabled) setState(() => _isPressed = false);
         },
         child: AnimatedScale(

@@ -233,7 +233,6 @@ class _MainNavigationShellState extends State<MainNavigationShell> {
           Expanded(
             child: AnimatedSwitcher(
               duration: AppAnimations.normal,
-              curve: AppAnimations.smoothInOut,
               child: KeyedSubtree(
                 key: ValueKey<int>(_currentIndex),
                 child: screens[_currentIndex],

@@ -45,7 +45,7 @@ class _HoverScaleCardState extends State<HoverScaleCard> {
       child: GestureDetector(
         onTapDown: (_) => setState(() => _isPressed = true),
         onTapUp: (_) => setState(() => _isPressed = false),
-        onTapCancel: (_) => setState(() => _isPressed = false),
+        onTapCancel: () => setState(() => _isPressed = false),
         onTap: widget.onTap,
         child: AnimatedContainer(
           duration: AppAnimations.fast,
