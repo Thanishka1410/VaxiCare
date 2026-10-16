@@ -97,14 +97,14 @@ class VaccineCard extends StatelessWidget {
                 padding: EdgeInsets.symmetric(vertical: 12),
                 child: Divider(height: 1),
               ),
-              Wrap(
-                alignment: WrapAlignment.spaceBetween,
-                crossAxisAlignment: WrapCrossAlignment.center,
-                spacing: 8,
-                runSpacing: 10,
-                children: [
-                  Row(
-                    mainAxisSize: MainAxisSize.min,
+              LayoutBuilder(
+                builder: (context, constraints) {
+                  final isNarrow = constraints.maxWidth < 360;
+
+                  final metaInfo = Wrap(
+                    crossAxisAlignment: WrapCrossAlignment.center,
+                    spacing: 8,
+                    runSpacing: 6,
                     children: [
                       Container(
                         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
@@ -121,7 +121,6 @@ class VaccineCard extends StatelessWidget {
                           ),
                         ),
                       ),
-                      const SizedBox(width: 8),
                       Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
@@ -146,50 +145,113 @@ class VaccineCard extends StatelessWidget {
                         ],
                       ),
                     ],
-                  ),
-                  Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      if (!vaccine.isCompleted) ...[
-                        OutlinedButton.icon(
-                          style: OutlinedButton.styleFrom(
-                            visualDensity: VisualDensity.compact,
-                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
-                            side: const BorderSide(color: AppColors.border),
-                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-                          ),
-                          onPressed: () => _openCalendarLink(context, vaccine),
-                          icon: const Icon(Icons.event_note_rounded, size: 16, color: AppColors.primaryBlue),
-                          label: const Text('Calendar', style: TextStyle(fontSize: 11, color: AppColors.primaryBlue)),
-                        ),
-                        const SizedBox(width: 8),
-                      ],
-                      if (!vaccine.isCompleted && onMarkDone != null)
-                        ElevatedButton.icon(
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: AppColors.primaryBlue,
-                            foregroundColor: Colors.white,
-                            elevation: 0,
-                            visualDensity: VisualDensity.compact,
-                            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-                          ),
-                          onPressed: onMarkDone,
-                          icon: const Icon(Icons.check_circle_outline, size: 16),
-                          label: const Text(
-                            'Mark Given',
-                            style: TextStyle(fontSize: 12, fontWeight: FontWeight.w700),
-                          ),
-                        )
-                      else
+                  );
+
+                  if (vaccine.isCompleted) {
+                    return Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        metaInfo,
                         const Icon(
                           Icons.chevron_right,
                           size: 20,
                           color: AppColors.secondaryText,
                         ),
+                      ],
+                    );
+                  }
+
+                  if (isNarrow) {
+                    // Stacking layout for mobile / narrow card containers
+                    return Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        metaInfo,
+                        const SizedBox(height: 12),
+                        Row(
+                          children: [
+                            OutlinedButton.icon(
+                              style: OutlinedButton.styleFrom(
+                                visualDensity: VisualDensity.compact,
+                                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+                                side: const BorderSide(color: AppColors.border),
+                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                              ),
+                              onPressed: () => _openCalendarLink(context, vaccine),
+                              icon: const Icon(Icons.event_note_rounded, size: 16, color: AppColors.primaryBlue),
+                              label: const Text('Calendar', style: TextStyle(fontSize: 12, color: AppColors.primaryBlue)),
+                            ),
+                            const SizedBox(width: 8),
+                            if (onMarkDone != null)
+                              Expanded(
+                                child: ElevatedButton.icon(
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: AppColors.primaryBlue,
+                                    foregroundColor: Colors.white,
+                                    elevation: 0,
+                                    visualDensity: VisualDensity.compact,
+                                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                                  ),
+                                  onPressed: onMarkDone,
+                                  icon: const Icon(Icons.check_circle_outline, size: 16),
+                                  label: const FittedBox(
+                                    fit: BoxFit.scaleDown,
+                                    child: Text(
+                                      'Mark Given',
+                                      style: TextStyle(fontSize: 12, fontWeight: FontWeight.w700),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                          ],
+                        ),
+                      ],
+                    );
+                  }
+
+                  // Standard / wider desktop layout
+                  return Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      metaInfo,
+                      Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          OutlinedButton.icon(
+                            style: OutlinedButton.styleFrom(
+                              visualDensity: VisualDensity.compact,
+                              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+                              side: const BorderSide(color: AppColors.border),
+                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                            ),
+                            onPressed: () => _openCalendarLink(context, vaccine),
+                            icon: const Icon(Icons.event_note_rounded, size: 16, color: AppColors.primaryBlue),
+                            label: const Text('Calendar', style: TextStyle(fontSize: 11, color: AppColors.primaryBlue)),
+                          ),
+                          const SizedBox(width: 8),
+                          if (onMarkDone != null)
+                            ElevatedButton.icon(
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: AppColors.primaryBlue,
+                                foregroundColor: Colors.white,
+                                elevation: 0,
+                                visualDensity: VisualDensity.compact,
+                                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                              ),
+                              onPressed: onMarkDone,
+                              icon: const Icon(Icons.check_circle_outline, size: 16),
+                              label: const Text(
+                                'Mark Given',
+                                style: TextStyle(fontSize: 12, fontWeight: FontWeight.w700),
+                              ),
+                            ),
+                        ],
+                      ),
                     ],
-                  ),
-                ],
+                  );
+                },
               ),
             ],
           ),

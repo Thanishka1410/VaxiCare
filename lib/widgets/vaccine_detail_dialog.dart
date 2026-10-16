@@ -53,11 +53,12 @@ class _VaccineDetailDialogState extends State<VaccineDetailDialog> {
     final factsheet = VaccineFactsheet.getFactsheet(widget.vaccine.vaccineName);
 
     return Dialog(
+      insetPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
       backgroundColor: Colors.white,
       child: Container(
         constraints: const BoxConstraints(maxWidth: 520),
-        padding: const EdgeInsets.all(24),
+        padding: const EdgeInsets.all(20),
         child: SingleChildScrollView(
           child: Column(
             mainAxisSize: MainAxisSize.min,
@@ -163,34 +164,72 @@ class _VaccineDetailDialogState extends State<VaccineDetailDialog> {
                 ),
 
                 const SizedBox(height: 20),
-                Row(
-                  children: [
-                    IconButton(
-                      icon: const Icon(Icons.delete_outline, color: AppColors.errorRed),
-                      tooltip: 'Delete Dose',
-                      onPressed: () {
-                        widget.onDelete();
-                        Navigator.of(context).pop();
-                      },
-                    ),
-                    const Spacer(),
-                    if (!widget.vaccine.isCompleted)
-                      PrimaryButton(
-                        text: 'Record Administration',
-                        icon: Icons.check_circle_outline,
-                        onPressed: () {
-                          setState(() => _isMarking = true);
-                        },
-                      )
-                    else
-                      OutlinedButton.icon(
-                        icon: const Icon(Icons.edit_outlined, size: 16),
-                        label: const Text('Update Details'),
-                        onPressed: () {
-                          setState(() => _isMarking = true);
-                        },
-                      ),
-                  ],
+                LayoutBuilder(
+                  builder: (context, constraints) {
+                    final isSmallScreen = constraints.maxWidth < 340;
+                    if (isSmallScreen) {
+                      return Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          if (!widget.vaccine.isCompleted)
+                            PrimaryButton(
+                              text: 'Record Administration',
+                              icon: Icons.check_circle_outline,
+                              onPressed: () {
+                                setState(() => _isMarking = true);
+                              },
+                            )
+                          else
+                            OutlinedButton.icon(
+                              icon: const Icon(Icons.edit_outlined, size: 16),
+                              label: const Text('Update Details'),
+                              onPressed: () {
+                                setState(() => _isMarking = true);
+                              },
+                            ),
+                          const SizedBox(height: 10),
+                          OutlinedButton.icon(
+                            icon: const Icon(Icons.delete_outline, color: AppColors.errorRed, size: 16),
+                            label: const Text('Delete Dose', style: TextStyle(color: AppColors.errorRed)),
+                            onPressed: () {
+                              widget.onDelete();
+                              Navigator.of(context).pop();
+                            },
+                          ),
+                        ],
+                      );
+                    }
+
+                    return Row(
+                      children: [
+                        IconButton(
+                          icon: const Icon(Icons.delete_outline, color: AppColors.errorRed),
+                          tooltip: 'Delete Dose',
+                          onPressed: () {
+                            widget.onDelete();
+                            Navigator.of(context).pop();
+                          },
+                        ),
+                        const Spacer(),
+                        if (!widget.vaccine.isCompleted)
+                          PrimaryButton(
+                            text: 'Record Administration',
+                            icon: Icons.check_circle_outline,
+                            onPressed: () {
+                              setState(() => _isMarking = true);
+                            },
+                          )
+                        else
+                          OutlinedButton.icon(
+                            icon: const Icon(Icons.edit_outlined, size: 16),
+                            label: const Text('Update Details'),
+                            onPressed: () {
+                              setState(() => _isMarking = true);
+                            },
+                          ),
+                      ],
+                    );
+                  },
                 ),
               ] else ...[
                 // Form to mark as given
