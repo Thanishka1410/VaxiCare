@@ -97,13 +97,17 @@ class VaccineCard extends StatelessWidget {
                 padding: EdgeInsets.symmetric(vertical: 12),
                 child: Divider(height: 1),
               ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              Wrap(
+                alignment: WrapAlignment.spaceBetween,
+                crossAxisAlignment: WrapCrossAlignment.center,
+                spacing: 8,
+                runSpacing: 10,
                 children: [
                   Row(
+                    mainAxisSize: MainAxisSize.min,
                     children: [
                       Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                         decoration: BoxDecoration(
                           color: AppColors.slateLight,
                           borderRadius: BorderRadius.circular(6),
@@ -117,8 +121,9 @@ class VaccineCard extends StatelessWidget {
                           ),
                         ),
                       ),
-                      const SizedBox(width: 12),
+                      const SizedBox(width: 8),
                       Row(
+                        mainAxisSize: MainAxisSize.min,
                         children: [
                           Icon(
                             vaccine.isCompleted ? Icons.event_available : Icons.event,
@@ -146,26 +151,35 @@ class VaccineCard extends StatelessWidget {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       if (!vaccine.isCompleted) ...[
-                        IconButton(
-                          visualDensity: VisualDensity.compact,
-                          icon: const Icon(Icons.event_note_rounded, size: 18, color: AppColors.primaryBlue),
-                          tooltip: 'Add to Calendar',
-                          onPressed: () {
-                            _openCalendarLink(context, vaccine);
-                          },
+                        OutlinedButton.icon(
+                          style: OutlinedButton.styleFrom(
+                            visualDensity: VisualDensity.compact,
+                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+                            side: const BorderSide(color: AppColors.border),
+                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                          ),
+                          onPressed: () => _openCalendarLink(context, vaccine),
+                          icon: const Icon(Icons.event_note_rounded, size: 16, color: AppColors.primaryBlue),
+                          label: const Text('Calendar', style: TextStyle(fontSize: 11, color: AppColors.primaryBlue)),
                         ),
-                        const SizedBox(width: 4),
+                        const SizedBox(width: 8),
                       ],
                       if (!vaccine.isCompleted && onMarkDone != null)
-                        TextButton.icon(
-                          style: TextButton.styleFrom(
+                        ElevatedButton.icon(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: AppColors.primaryBlue,
+                            foregroundColor: Colors.white,
+                            elevation: 0,
                             visualDensity: VisualDensity.compact,
-                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                            foregroundColor: AppColors.primaryBlue,
+                            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
                           ),
                           onPressed: onMarkDone,
-                          icon: const Icon(Icons.check, size: 16),
-                          label: const Text('Mark Given', style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600)),
+                          icon: const Icon(Icons.check_circle_outline, size: 16),
+                          label: const Text(
+                            'Mark Given',
+                            style: TextStyle(fontSize: 12, fontWeight: FontWeight.w700),
+                          ),
                         )
                       else
                         const Icon(
