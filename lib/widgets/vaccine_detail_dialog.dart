@@ -2,8 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import '../core/constants/app_colors.dart';
 import '../models/vaccine_record.dart';
-import '../widgets/primary_button.dart';
-import '../widgets/app_text_field.dart';
+import '../models/vaccine_factsheet.dart';
+import 'primary_button.dart';
+import 'app_text_field.dart';
 
 class VaccineDetailDialog extends StatefulWidget {
   final VaccineRecord vaccine;
@@ -23,6 +24,7 @@ class VaccineDetailDialog extends StatefulWidget {
 
 class _VaccineDetailDialogState extends State<VaccineDetailDialog> {
   bool _isMarking = false;
+  bool _showFactsheet = false;
   late DateTime _administeredDate;
   final _locationController = TextEditingController();
   final _batchController = TextEditingController();
@@ -48,12 +50,13 @@ class _VaccineDetailDialogState extends State<VaccineDetailDialog> {
   @override
   Widget build(BuildContext context) {
     final dateFormat = DateFormat('dd MMMM yyyy');
+    final factsheet = VaccineFactsheet.getFactsheet(widget.vaccine.vaccineName);
 
     return Dialog(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
       backgroundColor: Colors.white,
       child: Container(
-        constraints: const BoxConstraints(maxWidth: 500),
+        constraints: const BoxConstraints(maxWidth: 520),
         padding: const EdgeInsets.all(24),
         child: SingleChildScrollView(
           child: Column(
@@ -93,9 +96,9 @@ class _VaccineDetailDialogState extends State<VaccineDetailDialog> {
                   ),
                 ],
               ),
-              const SizedBox(height: 16),
+              const SizedBox(height: 14),
               const Divider(height: 1),
-              const SizedBox(height: 16),
+              const SizedBox(height: 14),
 
               if (!_isMarking) ...[
                 // Info Grid
@@ -113,7 +116,53 @@ class _VaccineDetailDialogState extends State<VaccineDetailDialog> {
                 if (widget.vaccine.notes != null && widget.vaccine.notes!.isNotEmpty)
                   _buildInfoRow('Clinical Notes', widget.vaccine.notes!),
 
-                const SizedBox(height: 24),
+                const SizedBox(height: 14),
+
+                // Vaccine Factsheet & Clinical Guidance Accordion
+                Container(
+                  decoration: BoxDecoration(
+                    color: AppColors.primaryLight.withValues(alpha: 0.5),
+                    borderRadius: BorderRadius.circular(14),
+                    border: Border.all(color: AppColors.primaryBlue.withValues(alpha: 0.2)),
+                  ),
+                  child: Theme(
+                    data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
+                    child: ExpansionTile(
+                      initiallyExpanded: _showFactsheet,
+                      onExpansionChanged: (exp) => setState(() => _showFactsheet = exp),
+                      leading: const Icon(Icons.info_outline, color: AppColors.primaryBlue, size: 20),
+                      title: const Text(
+                        'Vaccine Factsheet & Care Guide',
+                        style: TextStyle(fontSize: 13.5, fontWeight: FontWeight.w700, color: AppColors.primaryBlue),
+                      ),
+                      childrenPadding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+                      children: [
+                        _buildGuideItem(
+                          icon: Icons.healing_outlined,
+                          title: 'Common Post-Vaccine Reactions',
+                          content: factsheet.sideEffects,
+                          color: AppColors.warningAmber,
+                        ),
+                        const SizedBox(height: 10),
+                        _buildGuideItem(
+                          icon: Icons.favorite_outline,
+                          title: 'Parent Care & Soothing Tips',
+                          content: factsheet.careTips,
+                          color: AppColors.secondaryMint,
+                        ),
+                        const SizedBox(height: 10),
+                        _buildGuideItem(
+                          icon: Icons.emergency_outlined,
+                          title: 'When to Consult Pediatrician',
+                          content: factsheet.emergencyAlert,
+                          color: AppColors.errorRed,
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+
+                const SizedBox(height: 20),
                 Row(
                   children: [
                     IconButton(
@@ -253,7 +302,7 @@ class _VaccineDetailDialogState extends State<VaccineDetailDialog> {
 
   Widget _buildInfoRow(String label, String value, {Color? color}) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 6),
+      padding: const EdgeInsets.symmetric(vertical: 5),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -280,6 +329,45 @@ class _VaccineDetailDialogState extends State<VaccineDetailDialog> {
           ),
         ],
       ),
+    );
+  }
+
+  Widget _buildGuideItem({
+    required IconData icon,
+    required String title,
+    required String content,
+    required Color color,
+  }) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Icon(icon, color: color, size: 16),
+        const SizedBox(width: 8),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                title,
+                style: TextStyle(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w700,
+                  color: color,
+                ),
+              ),
+              const SizedBox(height: 2),
+              Text(
+                content,
+                style: const TextStyle(
+                  fontSize: 11.5,
+                  color: AppColors.primaryText,
+                  height: 1.35,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
     );
   }
 }

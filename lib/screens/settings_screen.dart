@@ -21,6 +21,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
   bool _browserNotifications = true;
   bool _smsAlerts = false;
   int _reminderLeadDays = 3;
+  String _selectedLanguage = 'English';
+  String _selectedGuideline = 'Indian Academy of Pediatrics (IAP)';
 
   @override
   Widget build(BuildContext context) {
@@ -177,6 +179,84 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           ],
                           onChanged: (val) {
                             if (val != null) setState(() => _reminderLeadDays = val);
+                          },
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 24),
+
+            // Clinical Guidelines & Localization
+            _buildSectionHeader('Clinical Guidelines & Language'),
+            Card(
+              elevation: 0,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16),
+                side: const BorderSide(color: AppColors.border),
+              ),
+              child: Column(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        const Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text('Pediatric Guidelines', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14)),
+                            Text('National immunization schedule baseline', style: TextStyle(fontSize: 12, color: AppColors.secondaryText)),
+                          ],
+                        ),
+                        DropdownButton<String>(
+                          value: _selectedGuideline,
+                          underline: const SizedBox(),
+                          items: const [
+                            DropdownMenuItem(value: 'Indian Academy of Pediatrics (IAP)', child: Text('IAP National Standard')),
+                            DropdownMenuItem(value: 'Universal Immunization Programme (UIP)', child: Text('Govt UIP Programme')),
+                            DropdownMenuItem(value: 'WHO Global Standard', child: Text('WHO Guidelines')),
+                          ],
+                          onChanged: (val) {
+                            if (val != null) setState(() => _selectedGuideline = val);
+                          },
+                        ),
+                      ],
+                    ),
+                  ),
+                  const Divider(height: 1),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        const Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text('Display Language', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14)),
+                            Text('Interface localization', style: TextStyle(fontSize: 12, color: AppColors.secondaryText)),
+                          ],
+                        ),
+                        DropdownButton<String>(
+                          value: _selectedLanguage,
+                          underline: const SizedBox(),
+                          items: const [
+                            DropdownMenuItem(value: 'English', child: Text('English (Default)')),
+                            DropdownMenuItem(value: 'Hindi', child: Text('हिंदी (Hindi)')),
+                            DropdownMenuItem(value: 'Telugu', child: Text('తెలుగు (Telugu)')),
+                          ],
+                          onChanged: (val) {
+                            if (val != null) {
+                              setState(() => _selectedLanguage = val);
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text('Language preference set to $val.'),
+                                  behavior: SnackBarBehavior.floating,
+                                ),
+                              );
+                            }
                           },
                         ),
                       ],

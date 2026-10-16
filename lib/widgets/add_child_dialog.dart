@@ -238,6 +238,36 @@ class _AddChildDialogState extends State<AddChildDialog> {
                     ),
                   ],
                 ),
+                const SizedBox(height: 14),
+
+                // National / International Guideline Selector
+                const Text(
+                  'Immunization Guideline Preset',
+                  style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600, color: AppColors.primaryText),
+                ),
+                const SizedBox(height: 6),
+                DropdownButtonFormField<String>(
+                  value: 'IAP (Indian Academy of Pediatrics)',
+                  decoration: InputDecoration(
+                    contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                  ),
+                  items: const [
+                    DropdownMenuItem(
+                      value: 'IAP (Indian Academy of Pediatrics)',
+                      child: Text('IAP Recommended Schedule (Standard)'),
+                    ),
+                    DropdownMenuItem(
+                      value: 'UIP (Universal Immunization Programme)',
+                      child: Text('UIP National Programme (Govt of India)'),
+                    ),
+                    DropdownMenuItem(
+                      value: 'WHO (World Health Organization)',
+                      child: Text('WHO Global Pediatric Guidelines'),
+                    ),
+                  ],
+                  onChanged: (v) {},
+                ),
                 const SizedBox(height: 24),
 
                 Row(

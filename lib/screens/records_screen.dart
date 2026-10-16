@@ -9,6 +9,7 @@ import '../widgets/empty_state_widget.dart';
 import '../widgets/responsive_layout.dart';
 import '../widgets/vaccine_detail_dialog.dart';
 import '../widgets/hover_scale_card.dart';
+import '../widgets/qr_pass_dialog.dart';
 
 class RecordsScreen extends StatelessWidget {
   const RecordsScreen({super.key});
@@ -79,26 +80,41 @@ class RecordsScreen extends StatelessWidget {
                                 ),
                               ],
                             ),
-                            Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                              decoration: BoxDecoration(
-                                color: AppColors.successLight,
-                                borderRadius: BorderRadius.circular(20),
-                                border: Border.all(color: AppColors.successGreen.withValues(alpha: 0.3)),
-                              ),
-                              child: const Row(
-                                children: [
-                                  Icon(Icons.verified, size: 14, color: AppColors.successGreen),
-                                  SizedBox(width: 6),
-                                  Text(
-                                    'Digital Pass',
-                                    style: TextStyle(
-                                      fontSize: 11,
-                                      fontWeight: FontWeight.w700,
-                                      color: AppColors.successGreen,
-                                    ),
+                            InkWell(
+                              onTap: () {
+                                showDialog(
+                                  context: context,
+                                  builder: (ctx) => QrPassDialog(
+                                    childName: activeChild.name,
+                                    dob: dateFormat.format(activeChild.dateOfBirth),
+                                    bloodGroup: activeChild.bloodGroup,
+                                    completedDosesCount: completedDoses.length,
+                                    protectionPercent: provider.completionProgress,
                                   ),
-                                ],
+                                );
+                              },
+                              borderRadius: BorderRadius.circular(20),
+                              child: Container(
+                                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                                decoration: BoxDecoration(
+                                  color: AppColors.successLight,
+                                  borderRadius: BorderRadius.circular(20),
+                                  border: Border.all(color: AppColors.successGreen.withValues(alpha: 0.3)),
+                                ),
+                                child: const Row(
+                                  children: [
+                                    Icon(Icons.qr_code_2_rounded, size: 16, color: AppColors.successGreen),
+                                    SizedBox(width: 6),
+                                    Text(
+                                      'View QR Pass',
+                                      style: TextStyle(
+                                        fontSize: 11,
+                                        fontWeight: FontWeight.w700,
+                                        color: AppColors.successGreen,
+                                      ),
+                                    ),
+                                  ],
+                                ),
                               ),
                             ),
                           ],

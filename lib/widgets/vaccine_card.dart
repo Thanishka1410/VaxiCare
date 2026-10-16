@@ -142,28 +142,84 @@ class VaccineCard extends StatelessWidget {
                       ),
                     ],
                   ),
-                  if (!vaccine.isCompleted && onMarkDone != null)
-                    TextButton.icon(
-                      style: TextButton.styleFrom(
-                        visualDensity: VisualDensity.compact,
-                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                        foregroundColor: AppColors.primaryBlue,
-                      ),
-                      onPressed: onMarkDone,
-                      icon: const Icon(Icons.check, size: 16),
-                      label: const Text('Mark Given', style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600)),
-                    )
-                  else
-                    const Icon(
-                      Icons.chevron_right,
-                      size: 20,
-                      color: AppColors.secondaryText,
-                    ),
+                  Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      if (!vaccine.isCompleted) ...[
+                        IconButton(
+                          visualDensity: VisualDensity.compact,
+                          icon: const Icon(Icons.event_note_rounded, size: 18, color: AppColors.primaryBlue),
+                          tooltip: 'Add to Calendar',
+                          onPressed: () {
+                            _openCalendarLink(context, vaccine);
+                          },
+                        ),
+                        const SizedBox(width: 4),
+                      ],
+                      if (!vaccine.isCompleted && onMarkDone != null)
+                        TextButton.icon(
+                          style: TextButton.styleFrom(
+                            visualDensity: VisualDensity.compact,
+                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                            foregroundColor: AppColors.primaryBlue,
+                          ),
+                          onPressed: onMarkDone,
+                          icon: const Icon(Icons.check, size: 16),
+                          label: const Text('Mark Given', style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600)),
+                        )
+                      else
+                        const Icon(
+                          Icons.chevron_right,
+                          size: 20,
+                          color: AppColors.secondaryText,
+                        ),
+                    ],
+                  ),
                 ],
               ),
             ],
           ),
         ),
+      ),
+    );
+  }
+
+  void _openCalendarLink(BuildContext context, VaccineRecord vac) {
+    final title = Uri.encodeComponent('VaxiCare: ${vac.vaccineName} (${vac.doseNumber})');
+    final details = Uri.encodeComponent('Scheduled immunization for ${vac.vaccineName} against ${vac.diseasePrevented}. Recorded via VaxiCare.');
+    final dateStr = DateFormat('yyyyMMdd').format(vac.dueDate);
+    final googleUrl = 'https://calendar.google.com/calendar/render?action=TEMPLATE&text=$title&dates=${dateStr}T090000Z/${dateStr}T100000Z&details=$details';
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Row(
+          children: [
+            const Icon(Icons.calendar_month, color: Colors.white, size: 18),
+            const SizedBox(width: 8),
+            Expanded(child: Text('Reminder ready for ${vac.vaccineName}.')),
+          ],
+        ),
+        action: SnackBarAction(
+          label: 'Open Calendar',
+          textColor: AppColors.secondaryMint,
+          onPressed: () {
+            // In web environments, window.open or navigating launches the link
+            showDialog(
+              context: context,
+              builder: (ctx) => AlertDialog(
+                title: const Text('Add to Google Calendar'),
+                content: SelectableText('Copy or open your calendar link:\n\n$googleUrl'),
+                actions: [
+                  TextButton(
+                    onPressed: () => Navigator.of(ctx).pop(),
+                    child: const Text('Close'),
+                  ),
+                ],
+              ),
+            );
+          },
+        ),
+        behavior: SnackBarBehavior.floating,
       ),
     );
   }
